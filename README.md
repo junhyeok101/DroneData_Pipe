@@ -105,6 +105,20 @@ python make_4_toal_video.py
 | 4 | `make_row_4_query_vidio.py` | 비디오 생성 | `python make_row_4_query_vidio.py 3131` |
 | 6 | `make_row_6_satellite_trajectory.py` | 경로 시각화 | `python make_row_6_satellite_trajectory.py 3131` |
 
+---
+
+## Output Example
+
+### Part 2, 3 결과물
+
+| Part 2: 좌표 추출 | Part 2: 경로 검증 | Part 3: 이미지 생성 |
+|---|---|---|
+| ![Step 1](Datasets_checking\output\query_satellite_center_ex\pair_0015.png) | ![Check 2](Dataset_image_video_making\output\query_image_ex\q136_@1333@1069.pngg) | ![Make 1](Dataset_image_video_making\output\total_image_ex\pair_0006.png) |
+| coordinates.csv 생성 | query_trajectory.png | query/*.png (512×512) |
+
+
+---
+
 ### 실행 방법
 
 **Step 0: 가능한 Row 확인**
