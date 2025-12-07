@@ -1,3 +1,7 @@
+# 이 코드는 특정 행 번호에 해당하는 thermal query와 satellite database의 HDF5 파일 정보를 추출하여 텍스트 파일로 저장합니다.
+# 각 파일의 주요 키와 데이터 형태를 기록하며, thermal 이미지와 satellite 이미지의 해상도 및 크기에 대한 설명도 포함합니다.
+
+
 import os
 import h5py
 
