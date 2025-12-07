@@ -113,7 +113,7 @@ python make_4_toal_video.py
 
 | center-check | satellite-trajectory | 
 |---|---|
-| ![Step 1](./Datasets_checking/output/query_satellite_center_ex/pair_0015.png) | ![Check 2](./Datasets_checking/output/query_satellite_center_ex/pair_0002.png) | 
+| ![Step 1](./Datasets_checking/output/query_satellite_center_ex/pair_0015.png) | ![Check 2](./Datasets_checking/output/satellite_sequence_ex/satellite_trajectory.png) | 
 | pair_0002.png | satellite_trajectory.png |
 
 
