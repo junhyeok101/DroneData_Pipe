@@ -116,6 +116,12 @@ python make_4_toal_video.py
 | ![Step 1](./Datasets_checking/output/query_satellite_center_ex/pair_0015.png) | ![Check 2](./Datasets_checking/output/satellite_sequence_ex/satellite_trajectory.png) | 
 | pair_0002.png | satellite_trajectory.png |
 
+### Part 4 결과물
+
+| total-image | satellite-trajectory-check | 
+|---|---|
+| ![Step 1](./Datasets_make_for_target_row/output/0001.png) | ![Check 2](./Datasets_make_for_target_row/output/2276_trajectory.png) | 
+| 0001.png | 2276_trajectory.png |
 
 ---
 
