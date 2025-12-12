@@ -110,22 +110,22 @@ This pipeline extracts specific flight paths (rows) from generated HDF5 files an
 ### Part 2 Results
 
 **center-check**
-![pair_0015](./Datasets_checking/output/query_satellite_center_ex/pair_0015.png)
-pair_0002.png
+
+<img src="./Datasets_checking/output/query_satellite_center_ex/pair_0015.png" width="600">
 
 **satellite-trajectory**
-![satellite_trajectory](./Datasets_checking/output/satellite_sequence_ex/satellite_trajectory.png)
-satellite_trajectory.png
+
+<img src="./Datasets_checking/output/satellite_sequence_ex/satellite_trajectory.png" width="600">
 
 ### Part 4 Results
 
 **total-image**
-![0001](./Datasets_make_for_target_row/output/0001.png)
-0001.png
+
+<img src="./Datasets_make_for_target_row/output/0001.png" width="600">
 
 **satellite-trajectory-check**
-![2276_trajectory](./Datasets_make_for_target_row/output/2276_trajectory.png)
-2276_trajectory.png
+
+<img src="./Datasets_make_for_target_row/output/2276_trajectory.png" width="600">
 
 ---
 
