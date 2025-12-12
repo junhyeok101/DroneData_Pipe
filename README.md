@@ -1,50 +1,50 @@
-# 드론 데이터셋 처리 파이프라인
+# Drone Dataset Processing Pipeline
 
-드론 열화상 데이터와 위성 이미지를 처리하여 지리공간 데이터셋을 생성, 검증, 시각화하는 완전한 파이프라인입니다.
+A complete pipeline for processing drone thermal imagery and satellite images to generate, validate, and visualize geospatial datasets.
 
 ---
 
-## Part 1: 데이터셋 생성 (Dataset_making)
+## Part 1: Dataset Generation (Dataset_making)
 
-원본 이미지 → 좌표 추출 → 크롭 → HDF5 변환
+Raw Images → Coordinate Extraction → Crop → HDF5 Conversion
 
-| 단계 | 파일 | 입력 | 출력 |
-|------|------|------|------|
-| 1 | `1_make_csv.py` | PNG 이미지 | coordinates.csv |
-| 2 | `2_image_crop.py` | 2048×1536 이미지 | cropped/ (1536×1536) |
-| 3 | `3_change_image_name.py` | cropped/ | 순차 파일명 변경 |
-| 4 | `4_refinement_china.py` | CSV | 픽셀 좌표 변환 |
-| 5 | `5_preprocess.py` | 이미지 + 좌표 | HDF5 파일 |
-| 6 | `6_make_x_y_swap.py` | HDF5 | 좌표 순서 수정 |
+| Step | File | Input | Output |
+|------|------|-------|--------|
+| 1 | `1_make_csv.py` | PNG images | coordinates.csv |
+| 2 | `2_image_crop.py` | 2048×1536 images | cropped/ (1536×1536) |
+| 3 | `3_change_image_name.py` | cropped/ | Sequential file renaming |
+| 4 | `4_refinement_china.py` | CSV | Pixel coordinate conversion |
+| 5 | `5_preprocess.py` | Images + coordinates | HDF5 files |
+| 6 | `6_make_x_y_swap.py` | HDF5 | Coordinate order correction |
 
-**실행:**
+**Run:**
 ```bash
 python 1_make_csv.py && python 2_image_crop.py && python 3_change_image_name.py
 python 4_refinement_china.py && python 5_preprocess.py && python 6_make_x_y_swap.py
 ```
 
-**입력 파일명 형식:** `@timestamp@longitude@latitude@.png`
+**Input filename format:** `@timestamp@longitude@latitude@.png`
 
-**출력:** `test_queries.h5`, `test_database.h5`
+**Output:** `test_queries.h5`, `test_database.h5`
 
 ---
 
-## Part 2: 데이터셋 검증 (Datasets_checking)
+## Part 2: Dataset Validation (Datasets_checking)
 
-생성된 HDF5 파일의 구조, 좌표, 정렬 상태를 검증합니다.
+Validates the structure, coordinates, and alignment of generated HDF5 files.
 
-| 파일 | 설명 | 명령어 |
-|------|------|--------|
-| `check_1_q_db_info.py` | H5 파일 구조 확인 | `python check_1_q_db_info.py` |
-| `check_1_custom_data.py` | 좌표 정보 추출 | `python check_1_custom_data.py` |
-| `check_2_sequence_plot.py` | 비행 경로 플롯 | `python check_2_sequence_plot.py` |
-| `check_2_sequence_satellite.py` | 위성 이미지 위 경로 표시 | `python check_2_sequence_satellite.py` |
-| `check_3_database_crop_random_test.py` | 랜덤 5개 샘플 비교 | `python check_3_database_crop_random_test.py` |
-| `check_4_satellite_info.py` | 위성 이미지 정보 | `python check_4_satellite_info.py` |
-| `check_5_target_grid_crop.py` | 특정 좌표 크롭 | 스크립트 수정 후 실행 |
-| `query_satellite_check_center.py` | 전체 쌍 시각화 | `python query_satellite_check_center.py` |
+| File | Description | Command |
+|------|-------------|---------|
+| `check_1_q_db_info.py` | Check H5 file structure | `python check_1_q_db_info.py` |
+| `check_1_custom_data.py` | Extract coordinate info | `python check_1_custom_data.py` |
+| `check_2_sequence_plot.py` | Plot flight path | `python check_2_sequence_plot.py` |
+| `check_2_sequence_satellite.py` | Overlay path on satellite image | `python check_2_sequence_satellite.py` |
+| `check_3_database_crop_random_test.py` | Compare 5 random samples | `python check_3_database_crop_random_test.py` |
+| `check_4_satellite_info.py` | Satellite image info | `python check_4_satellite_info.py` |
+| `check_5_target_grid_crop.py` | Crop specific coordinates | Modify script before running |
+| `query_satellite_check_center.py` | Visualize all pairs | `python query_satellite_check_center.py` |
 
-**빠른 검증:**
+**Quick Validation:**
 ```bash
 python check_1_q_db_info.py
 python check_1_custom_data.py
@@ -52,62 +52,62 @@ python check_2_sequence_satellite.py
 python query_satellite_check_center.py
 ```
 
-**좌표 형식:** `@row@col` (row: 세로, col: 가로)
+**Coordinate format:** `@row@col` (row: vertical, col: horizontal)
 
 ---
 
-## Part 3: 이미지 및 영상 생성 (Dataset_image_video_making)
+## Part 3: Image and Video Generation (Dataset_image_video_making)
 
-HDF5 파일을 이미지로 변환하고 영상을 생성합니다.
+Converts HDF5 files to images and generates videos.
 
-| 단계 | 파일 | 처리 | 출력 |
-|------|------|------|------|
-| 1 | `make_1_query_image.py` | 768×768 → 512×512 크롭, PNG 저장 | query/*.png |
-| 2 | `make_2_query_vidio.py` | PNG → MP4 비디오 (5fps) | query_video/uav_flight.mp4 |
-| 3 | `make_3_total_jeju_0_125_copy.py` | 위성-쿼리 쌍 시각화 | total_images/pair_*.png |
-| 3 | `make_3_total_NewYork.py` | 위성-쿼리 쌍 시각화 | total_images/pair_*.png |
-| 4 | `make_4_toal_video.py` | 시각화 → MP4 비디오 | match_video/match.mp4 |
+| Step | File | Process | Output |
+|------|------|---------|--------|
+| 1 | `make_1_query_image.py` | 768×768 → 512×512 crop, save PNG | query/*.png |
+| 2 | `make_2_query_vidio.py` | PNG → MP4 video (5fps) | query_video/uav_flight.mp4 |
+| 3 | `make_3_total_jeju_0_125_copy.py` | Satellite-query pair visualization | total_images/pair_*.png |
+| 3 | `make_3_total_NewYork.py` | Satellite-query pair visualization | total_images/pair_*.png |
+| 4 | `make_4_toal_video.py` | Visualization → MP4 video | match_video/match.mp4 |
 
-**실행:**
+**Run:**
 ```bash
 python make_1_query_image.py
 python make_2_query_vidio.py
-python make_3_total_jeju_0_125_copy.py  # 또는 make_3_total_NewYork.py
+python make_3_total_jeju_0_125_copy.py  # or make_3_total_NewYork.py
 python make_4_toal_video.py
 ```
 
-**검증:** 중앙점(빨간 점) 일치 여부 확인
+**Validation:** Verify center point (red dot) alignment
 
 ---
 
-## Part 4: 특정 행 데이터셋 생성 (Datasets_make_for_target_row)
+## Part 4: Target Row Dataset Generation (Datasets_make_for_target_row)
 
-### 개요
+### Overview
 
-**독립적으로 작동합니다.** Part 1-3과 함께 사용할 수도, 별도로 사용할 수도 있습니다.
+**Operates independently.** Can be used alongside Parts 1-3 or separately.
 
-이 파이프라인은 생성된 HDF5 파일에서 특정 비행 경로(row)만 선택하여 개별 데이터셋으로 처리합니다.
+This pipeline extracts specific flight paths (rows) from generated HDF5 files and processes them as individual datasets.
 
-**사용 시나리오:**
-- 특정 지역의 비행 데이터만 추출
-- 모델 학습 시 특정 경로의 데이터 집중 분석
-- 작은 규모의 테스트 데이터셋 생성
+**Use Cases:**
+- Extract flight data for specific regions
+- Focus analysis on specific paths during model training
+- Generate small-scale test datasets
 
-### 처리 단계
+### Processing Steps
 
-| 단계 | 파일 | 설명 | 명령어 |
-|------|------|------|--------|
-| 0 | `make_check_row.py` | 가능한 row 목록 확인 | `python make_check_row.py` |
-| 1 | `make_row_1_query.py` | 쿼리 추출 및 중복 제거 | `python make_row_1_query.py 3131` |
-| 2 | `make_row_2_database.py` | 데이터베이스 추출 | `python make_row_2_database.py 3131` |
-| 2.5 | `make_row_2.5_refine.py` | 좌표 정렬 정제 (선택) | `python make_row_2.5_refine.py 3131` |
-| 3 | `make_row_3_query_image.py` | PNG 내보내기 | `python make_row_3_query_image.py 3131` |
-| 4 | `make_row_4_query_vidio.py` | 비디오 생성 | `python make_row_4_query_vidio.py 3131` |
-| 6 | `make_row_6_satellite_trajectory.py` | 경로 시각화 | `python make_row_6_satellite_trajectory.py 3131` |
+| Step | File | Description | Command |
+|------|------|-------------|---------|
+| 0 | `make_check_row.py` | Check available row list | `python make_check_row.py` |
+| 1 | `make_row_1_query.py` | Extract queries, remove duplicates | `python make_row_1_query.py 3131` |
+| 2 | `make_row_2_database.py` | Extract database | `python make_row_2_database.py 3131` |
+| 2.5 | `make_row_2.5_refine.py` | Refine coordinate alignment (optional) | `python make_row_2.5_refine.py 3131` |
+| 3 | `make_row_3_query_image.py` | Export PNG | `python make_row_3_query_image.py 3131` |
+| 4 | `make_row_4_query_vidio.py` | Generate video | `python make_row_4_query_vidio.py 3131` |
+| 6 | `make_row_6_satellite_trajectory.py` | Visualize trajectory | `python make_row_6_satellite_trajectory.py 3131` |
 
 ---
 
-### Part 2 결과물
+### Part 2 Results
 
 **center-check**
 ![pair_0015](./Datasets_checking/output/query_satellite_center_ex/pair_0015.png)
@@ -117,9 +117,7 @@ pair_0002.png
 ![satellite_trajectory](./Datasets_checking/output/satellite_sequence_ex/satellite_trajectory.png)
 satellite_trajectory.png
 
-
-
-### Part 4 결과물
+### Part 4 Results
 
 **total-image**
 ![0001](./Datasets_make_for_target_row/output/0001.png)
@@ -131,38 +129,38 @@ satellite_trajectory.png
 
 ---
 
-### 실행 방법
+### How to Run
 
-**Step 0: 가능한 Row 확인**
+**Step 0: Check Available Rows**
 ```bash
 python make_check_row.py
 ```
 
-**순차 실행 (특정 row 선택, 예: 3131)**
+**Sequential Execution (select specific row, e.g., 3131)**
 ```bash
 python make_row_1_query.py 3131
 python make_row_2_database.py 3131
-python make_row_2.5_refine.py 3131      # 선택사항
+python make_row_2.5_refine.py 3131      # Optional
 python make_row_3_query_image.py 3131
 python make_row_4_query_vidio.py 3131
 python make_row_6_satellite_trajectory.py 3131
 ```
 
-**자동 실행 (권장)**
+**Automatic Execution (Recommended)**
 ```bash
-# make_row_7_run_all.py 상단에서 target_number 수정
+# Modify target_number at the top of make_row_7_run_all.py
 target_number = 3131
 
 python make_row_7_run_all.py
 ```
 
-### 출력 구조
+### Output Structure
 
 ```
 t_datasets/
 ├── 3131_datasets/
-│   ├── test_queries.h5       # 추출된 쿼리
-│   └── test_database.h5      # 추출된 데이터베이스
+│   ├── test_queries.h5       # Extracted queries
+│   └── test_database.h5      # Extracted database
 ├── 3131_query_images/
 │   ├── q1_@3131@1000.png
 │   ├── q2_@3131@1020.png
@@ -173,9 +171,9 @@ t_datasets/
     └── 3131_trajectory.png
 ```
 
-### 사용 예시
+### Usage Examples
 
-**제주 데이터셋에서 row 2276 추출**
+**Extract row 2276 from Jeju dataset**
 ```bash
 python make_check_row.py
 python make_row_1_query.py 2276
@@ -185,91 +183,91 @@ python make_row_4_query_vidio.py 2276
 python make_row_6_satellite_trajectory.py 2276
 ```
 
-**자동 모드로 빠르게 처리**
+**Quick processing with automatic mode**
 ```bash
-# make_row_7_run_all.py 수정 후
+# After modifying make_row_7_run_all.py
 python make_row_7_run_all.py
 ```
 
 ---
 
-## 전체 파이프라인 흐름
+## Complete Pipeline Flow
 
 ```
-원본 이미지
+Raw Images
     ↓
-[Part 1] 데이터셋 생성
-    ├─ 좌표 추출
-    ├─ 이미지 크롭
-    └─ HDF5 변환
+[Part 1] Dataset Generation
+    ├─ Coordinate extraction
+    ├─ Image cropping
+    └─ HDF5 conversion
     ↓
-[Part 2] 데이터셋 검증
-    ├─ 구조 확인
-    ├─ 좌표 검증
-    └─ 시각화 확인
+[Part 2] Dataset Validation
+    ├─ Structure verification
+    ├─ Coordinate validation
+    └─ Visual inspection
     ↓
-[Part 3] 이미지 및 영상 생성
-    ├─ PNG 내보내기
-    ├─ 쌍 시각화
-    └─ 비디오 생성
+[Part 3] Image and Video Generation
+    ├─ PNG export
+    ├─ Pair visualization
+    └─ Video generation
     ↓
-최종 데이터셋 완성
+Final Dataset Complete
 
-[Part 4] 특정 행 추출 (선택사항 & 독립적)
-    ├─ Row 선택
-    ├─ 직선 경로 추출
-    └─ 개별 처리
+[Part 4] Target Row Extraction (Optional & Independent)
+    ├─ Row selection
+    ├─ Linear path extraction
+    └─ Individual processing
 ```
 
 ---
 
-## 설치 및 설정
+## Installation and Setup
 
-### 필수 라이브러리
+### Required Libraries
 ```bash
 pip install h5py opencv-python matplotlib numpy pandas natsort pillow
 ```
 
-### 경로 설정
-각 스크립트 상단에서 수정:
-- `input_dir`: 원본 이미지 폴더
-- `output_dir`: 출력 폴더
-- `query_h5_path`: 쿼리 H5 경로
-- `db_h5_path`: 데이터베이스 H5 경로
-- `sat_img_path`: 위성 이미지 경로
+### Path Configuration
+Modify at the top of each script:
+- `input_dir`: Raw image folder
+- `output_dir`: Output folder
+- `query_h5_path`: Query H5 path
+- `db_h5_path`: Database H5 path
+- `sat_img_path`: Satellite image path
 
 ---
 
-## 주요 기능
+## Key Features
 
-- 자동 좌표 파싱 (@row@col, @timestamp@lon@lat)
-- 경계 조건 처리 및 유효성 검사
-- 자동 이미지 정렬 (자연 정렬)
-- 멀티프로세싱으로 빠른 배치 처리
-- 실시간 진행 상황 표시
-- 시각적 검증 (중앙점 표시, 경로 오버레이)
-
----
-
-## 문제 해결
-
-| 문제 | 해결 |
-|------|------|
-| 좌표 파싱 실패 | 파일명 형식 확인: `@timestamp@lon@lat@.png` |
-| PNG 이미지 없음 | 이전 단계 완료 및 경로 확인 |
-| 좌표 범위 초과 | 정상 (경계 근처 샘플 제외) |
-| HDF5 생성 실패 | 디스크 공간 및 메모리 확인 |
-| 비디오 생성 실패 | `pip install opencv-contrib-python` |
-| Row 찾기 실패 | `make_check_row.py` 실행하여 가능한 row 확인 |
-| H5 파일 오류 | 입력 H5 파일 경로 및 형식 확인 |
+- Automatic coordinate parsing (@row@col, @timestamp@lon@lat)
+- Boundary condition handling and validation
+- Automatic image sorting (natural sort)
+- Fast batch processing with multiprocessing
+- Real-time progress display
+- Visual verification (center point markers, path overlay)
 
 ---
 
-## 주의사항
+## Troubleshooting
 
-- 모든 좌표는 WGS84 기준
-- 중복 제거 후 데이터 개수 감소는 정상
-- 대용량 데이터셋은 배치 크기 줄이기
-- 비행 경로는 같은 row 내에서만 추출
-- Step 2와 Step 3의 순서는 중요 (파일명 일관성)
-- Part 4는 선택사항이며 Part 1-3의 결과물을 기반으로 작동
+| Issue | Solution |
+|-------|----------|
+| Coordinate parsing failure | Check filename format: `@timestamp@lon@lat@.png` |
+| No PNG images | Verify previous step completion and paths |
+| Coordinate out of range | Normal (samples near boundaries excluded) |
+| HDF5 creation failure | Check disk space and memory |
+| Video generation failure | `pip install opencv-contrib-python` |
+| Row not found | Run `make_check_row.py` to check available rows |
+| H5 file error | Verify input H5 file path and format |
+
+---
+
+## Notes
+
+- All coordinates use WGS84 reference system
+- Reduced data count after duplicate removal is normal
+- Reduce batch size for large datasets
+- Flight paths are extracted only within the same row
+- Step 2 and Step 3 order matters (filename consistency)
+- Part 4 is optional and operates on Part 1-3 outputs
